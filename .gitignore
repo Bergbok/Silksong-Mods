@@ -1,0 +1,7 @@
+/artifacts/
+.idea/
+.obsidian/
+bin/
+obj/
+SilksongPath.props
+!/SilksongPath.props
