@@ -1,0 +1,12 @@
+<Project>
+	<PropertyGroup>
+		<!-- When developing, edit this to match your game install path and copy it to mod subfolders. -->
+		<!-- find . -mindepth 1 -maxdepth 1 -type d ! -name ".github" -exec cp SilksongPath.props {}/SilksongPath.props \; -->
+
+		<!-- Linux -->
+		<SilksongFolder>/home/YOUR_USERNAME/.local/share/Steam/steamapps/common/Hollow Knight Silksong/</SilksongFolder>
+
+		<!-- Windows -->
+		<!-- <SilksongFolder>C:/Program Files (x86)/Steam/steamapps/common/Hollow Knight Silksong</SilksongFolder> -->
+	</PropertyGroup>
+</Project>
