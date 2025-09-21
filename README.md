@@ -9,7 +9,22 @@ Supports custom sound effects, simply add them to the SFX folder after installin
 Any [file format supported by Unity](https://docs.unity3d.com/6000.2/Documentation/Manual/AudioFiles-compatibility.html) should work.
 
 <details>
-<summary>Supported Events</summary>
+<summary><strong>Videos</strong></summary>
+
+<br>
+
+https://github.com/user-attachments/assets/3e3813d6-4924-4982-8823-86eb9576f808
+
+https://github.com/user-attachments/assets/c6c63ed8-a299-40be-aace-94eba34b1a71
+
+https://github.com/user-attachments/assets/cd6d4045-beca-4860-a592-76896960c859
+
+https://github.com/user-attachments/assets/f8e58b28-b378-4999-8f3e-3baa8fb070e5
+
+</details>
+
+<details>
+<summary><strong>Supported Events</strong></summary>
 
 - Attack
 - Bind / Heal
