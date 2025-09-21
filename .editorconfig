@@ -1,0 +1,33 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+indent_style = tab
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.cs]
+# Use 'new(...)'
+csharp_style_implicit_object_creation_when_type_is_apparent = false
+# Dereference of a possibly null reference.
+dotnet_diagnostic.CS8602.severity = silent
+# Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+dotnet_diagnostic.CS8618.severity = silent
+# Simplify collection initialization
+dotnet_diagnostic.IDE0028.severity = none
+# Add readonly modifier
+dotnet_diagnostic.IDE0044.severity = silent
+# Remove unused private member
+dotnet_diagnostic.IDE0051.severity = none
+# Simplify collection initialization
+dotnet_diagnostic.IDE0300.severity = silent
+# Simplify collection initialization
+dotnet_diagnostic.IDE0305.severity = silent
+
+[*.md]
+trim_trailing_whitespace = false
+
+[*.yml]
+indent_size = 2
+indent_style = space
