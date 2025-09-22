@@ -391,7 +391,7 @@ public class Voicelines : BaseUnityPlugin
 					PlayAudio("Nail Art", NailArtSound.Value);
 					return false;
 				case "Bind Hornet Voice" when BindSound.Value != "None":
-					PlayAudio("Nail Art", BindSound.Value);
+					PlayAudio("Bind", BindSound.Value);
 					return false;
 				case "Attack Normal Hornet Voice" when AttackSound.Value != "None":
 				case "Grunt Hornet Voice" when JumpSound.Value != "None":
