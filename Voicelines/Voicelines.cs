@@ -263,18 +263,6 @@ public class Voicelines : BaseUnityPlugin
 				Instance.Logger.LogError("Could not find player AudioSource, audio will not play.");
 			}
 
-			__instance.StartCoroutine(SetupFsmMonitors(__instance));
-		}
-
-		private static IEnumerator SetupFsmMonitors(HeroController hornet)
-		{
-			yield return null;
-
-			PlayMakerFSM_SendEvent_Patch.RegisterFsmMonitor(hornet.bellBindFSM, "bellBindFSM");
-			PlayMakerFSM_SendEvent_Patch.RegisterFsmMonitor(hornet.harpoonDashFSM, "harpoonDashFSM");
-			PlayMakerFSM_SendEvent_Patch.RegisterFsmMonitor(hornet.silkSpecialFSM, "silkSpecialFSM");
-			PlayMakerFSM_SendEvent_Patch.RegisterFsmMonitor(hornet.umbrellaFSM, "umbrellaFSM");
-
 			// foreach (var state in hornet.spellControl.FsmStates)
 			// {
 			// 	Instance.Logger.LogInfo($"spellControl State: {state.Name}");
@@ -310,72 +298,61 @@ public class Voicelines : BaseUnityPlugin
 	[HarmonyPatch(typeof(PlayMakerFSM), nameof(PlayMakerFSM.SendEvent))]
 	private static class PlayMakerFSM_SendEvent_Patch
 	{
-		private static readonly Dictionary<PlayMakerFSM, string> monitoredFsms = new Dictionary<PlayMakerFSM, string>();
-
-		public static void RegisterFsmMonitor(PlayMakerFSM fsm, string fsmName)
-		{
-			if (fsm != null && !monitoredFsms.ContainsKey(fsm))
-				monitoredFsms[fsm] = fsmName;
-		}
-
 		[HarmonyPrefix]
 		private static void Prefix(PlayMakerFSM __instance, ref string eventName)
 		{
-			if (monitoredFsms.TryGetValue(__instance, out string fsmName))
-			{
-				// Instance.Logger.LogInfo($"{fsmName} received event: {eventName}");
+			// Instance.Logger.LogInfo($"{__instance.FsmName} received event: {eventName}");
 
-				switch (fsmName)
-				{
-					case "bellBindFSM":
-						switch (eventName)
-						{
-							case "HIT":
-								PlayAudio("Warding Bell Hit", WardingBellHitSound.Value);
-								break;
-						}
-						break;
-					case "harpoonDashFSM":
-						switch (eventName)
-						{
-							case "DO MOVE":
-								PlayAudio("Clawline", ClawlineSound.Value);
-								break;
-						}
-						break;
-					case "silkSpecialFSM":
-						switch (eventName)
-						{
-							case "NEEDLE THROW":
-								PlayAudio("Silkspear", SilkspearSound.Value);
-								break;
-							case "PARRY":
-								PlayAudio("Cross Stitch", CrossStitchSound.Value);
-								break;
-							case "SILK CHARGE":
-								PlayAudio("Sharpdart", SharpdartSound.Value);
-								break;
-							case "SILK BOMB":
-								PlayAudio("Rune Rage", RuneRageSound.Value);
-								break;
-							case "BOSS NEEDLE":
-								PlayAudio("Pale Nails", PaleNailsSound.Value);
-								break;
-							case "THREAD SPHERE":
-								PlayAudio("Thread Storm", ThreadStormSound.Value);
-								break;
-						}
-						break;
-					case "umbrellaFSM":
-						switch (eventName)
-						{
-							case "FLOAT":
-								if (__instance.ActiveStateName != "Cooldown")
-									PlayAudio("Drifer's Cloak", DrifersCloakSound.Value);
-								break;
-						}
-						break;
-				}
+			switch (__instance.FsmName)
+			{
+				case "Control":
+					switch (eventName)
+					{
+						case "HIT":
+							PlayAudio("Warding Bell Hit", WardingBellHitSound.Value);
+							break;
+					}
+					break;
+				case "Harpoon Dash":
+					switch (eventName)
+					{
+						case "DO MOVE":
+							PlayAudio("Clawline", ClawlineSound.Value);
+							break;
+					}
+					break;
+				case "Silk Specials":
+					switch (eventName)
+					{
+						case "NEEDLE THROW":
+							PlayAudio("Silkspear", SilkspearSound.Value);
+							break;
+						case "PARRY":
+							PlayAudio("Cross Stitch", CrossStitchSound.Value);
+							break;
+						case "SILK CHARGE":
+							PlayAudio("Sharpdart", SharpdartSound.Value);
+							break;
+						case "SILK BOMB":
+							PlayAudio("Rune Rage", RuneRageSound.Value);
+							break;
+						case "BOSS NEEDLE":
+							PlayAudio("Pale Nails", PaleNailsSound.Value);
+							break;
+						case "THREAD SPHERE":
+							PlayAudio("Thread Storm", ThreadStormSound.Value);
+							break;
+					}
+					break;
+				case "Umbrella Float":
+					switch (eventName)
+					{
+						case "FLOAT":
+							if (__instance.ActiveStateName != "Cooldown")
+								PlayAudio("Drifer's Cloak", DrifersCloakSound.Value);
+							break;
+					}
+					break;
 			}
 		}
 	}
