@@ -11,6 +11,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5.0.0
+        with:
+          fetch-depth: 0
 
       - name: Get Mod Folder
         id: get-mod-dir
@@ -19,6 +21,33 @@ jobs:
       - name: Get Version
         id: get-version
         run: echo "VERSION=$(echo ${{ github.ref_name }} | sed 's/^.*-v//')" >> $GITHUB_OUTPUT
+
+      - name: Get auto-generated release notes
+        id: generate-notes
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const response = await github.rest.repos.generateReleaseNotes({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tag_name: context.ref.replace('refs/tags/', '')
+            });
+            return response.data.body;
+          result-encoding: string
+
+      - name: Generate changelog
+        run: |
+          cat << 'NOTESEOF' > CHANGELOG.md
+          ${{ steps.generate-notes.outputs.result }}
+          NOTESEOF
+
+          PREVIOUS_TAG=$(git tag --sort=-version:refname | grep "^${{ steps.get-mod-dir.outputs.DIR }}-v" | head -n 2 | tail -n 1)
+
+          if [ ! -z "$PREVIOUS_TAG" ]; then
+            echo "" >> CHANGELOG.md
+            echo "## Commit History" >> CHANGELOG.md
+            git log ${PREVIOUS_TAG}..HEAD --pretty=format:"- %s (%h)" --reverse >> CHANGELOG.md
+          fi
 
       - name: Install dotnet
         uses: actions/setup-dotnet@v5.0.0
@@ -45,5 +74,5 @@ jobs:
           name: "${{ steps.get-mod-dir.outputs.DIR }} v${{ steps.get-version.outputs.VERSION }}"
           files: ${{ steps.get-mod-dir.outputs.DIR }}/bin/Publish/*.zip
           fail_on_unmatched_files: true
-          generate_release_notes: true
+          body_path: CHANGELOG.md
           make_latest: true
