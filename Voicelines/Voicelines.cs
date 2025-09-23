@@ -18,6 +18,7 @@ public class Voicelines : BaseUnityPlugin
 {
 	internal static Voicelines Instance;
 	internal static ConfigEntry<bool> PluginEnabled;
+	internal static ConfigEntry<bool> UseGameVolume;
 	internal static ConfigEntry<float> AudioVolume;
 	internal static ConfigEntry<string> AttackSound;
 	internal static ConfigEntry<string> BindSound;
@@ -55,8 +56,9 @@ public class Voicelines : BaseUnityPlugin
 
 		var soundList = new AcceptableValueList<string>(new[] { "None", "Random" }.Concat(audioList).ToArray());
 
-		PluginEnabled = 	  Config.Bind("General", 		"Enabled",			 true, 	  new ConfigDescription("", null, new ConfigurationManagerAttributes { Order = 2 }));
-		AudioVolume = 		  Config.Bind("General", 		"Volume", 			0.125f,   new ConfigDescription("", new AcceptableValueRange<float>(0, 1), new ConfigurationManagerAttributes { Order = 1 }));
+		PluginEnabled = 	  Config.Bind("General", 		"Enabled",			 true, 	  new ConfigDescription("", null, new ConfigurationManagerAttributes { Order = 3 }));
+		UseGameVolume = 	  Config.Bind("General", 		"Use Game Volume",	 true, 	  new ConfigDescription("", null, new ConfigurationManagerAttributes { Order = 2 }));
+		AudioVolume = 		  Config.Bind("General", 		"Custom Volume",	0.125f,   new ConfigDescription("", new AcceptableValueRange<float>(0, 1), new ConfigurationManagerAttributes { Order = 1 }));
 		AttackSound = 		  Config.Bind("Sound Bindings", "Attack", 			"None",   new ConfigDescription("", soundList));
 		BindSound = 		  Config.Bind("Sound Bindings", "Bind", 			"None",   new ConfigDescription("", soundList));
 		ClawlineSound = 	  Config.Bind("Sound Bindings", "Clawline", 		"None",   new ConfigDescription("", soundList));
@@ -152,10 +154,14 @@ public class Voicelines : BaseUnityPlugin
 		{
 			if (Instance.playerAudioSource != null)
 			{
-				float originalVolume = Instance.playerAudioSource.volume;
-				Instance.playerAudioSource.volume = AudioVolume.Value;
-				Instance.playerAudioSource.PlayOneShot(clip);
-				Instance.playerAudioSource.volume = originalVolume;
+				if (UseGameVolume.Value)
+				{
+					Instance.playerAudioSource.PlayOneShot(clip);
+				}
+				else
+				{
+					Instance.playerAudioSource.PlayOneShot(clip, AudioVolume.Value);
+				}
 			}
 		}
 		else
