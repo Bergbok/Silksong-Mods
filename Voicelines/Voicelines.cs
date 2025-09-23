@@ -180,6 +180,17 @@ public class Voicelines : BaseUnityPlugin
 		}
 	}
 
+	[HarmonyPatch(typeof(HeroController), nameof(HeroController.CanSuperJump))]
+	private static class HeroController_CanSuperJump_Patch
+	{
+		[HarmonyPostfix]
+		private static void Postfix(HeroController __instance, ref bool __result)
+		{
+			if (__result)
+				PlayAudio("Silk Soar", SilkSoarSound.Value);
+		}
+	}
+
 	[HarmonyPatch(typeof(HeroController), nameof(HeroController.Die))]
 	private static class HeroController_Die_Patch
 	{
