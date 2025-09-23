@@ -54,34 +54,35 @@ public class Voicelines : BaseUnityPlugin
 
 		LoadAudioClips();
 
-		var soundList = new AcceptableValueList<string>(new[] { "None", "Random" }.Concat(audioList).ToArray());
+		var soundList = new[] { "None", "Random" }.Concat(audioList).ToArray();
+		var acceptableValues = new AcceptableCSV<string>(soundList);
 
-		PluginEnabled = 	  Config.Bind("General", 		"Enabled",			 true, 	  new ConfigDescription("", null, new ConfigurationManagerAttributes { Order = 3 }));
-		UseGameVolume = 	  Config.Bind("General", 		"Use Game Volume",	 true, 	  new ConfigDescription("", null, new ConfigurationManagerAttributes { Order = 2 }));
-		AudioVolume = 		  Config.Bind("General", 		"Custom Volume",	0.125f,   new ConfigDescription("", new AcceptableValueRange<float>(0, 1), new ConfigurationManagerAttributes { Order = 1 }));
-		AttackSound = 		  Config.Bind("Sound Bindings", "Attack", 			"None",   new ConfigDescription("", soundList));
-		BindSound = 		  Config.Bind("Sound Bindings", "Bind", 			"None",   new ConfigDescription("", soundList));
-		ClawlineSound = 	  Config.Bind("Sound Bindings", "Clawline", 		"None",   new ConfigDescription("", soundList));
-		CrossStitchSound = 	  Config.Bind("Sound Bindings", "Cross Stitch", 	"None",   new ConfigDescription("", soundList));
-		DashAttackSound = 	  Config.Bind("Sound Bindings", "Dash Attack", 		"None",   new ConfigDescription("", soundList));
-		DeathSound = 		  Config.Bind("Sound Bindings", "Death", 			"None",   new ConfigDescription("", soundList));
-		DrifersCloakSound =   Config.Bind("Sound Bindings", "Drifters Cloak", 	"None",   new ConfigDescription("", soundList));
-		FaydownCloakSound =   Config.Bind("Sound Bindings", "Faydown Cloak", 	"None",   new ConfigDescription("", soundList));
-		HurtSound = 		  Config.Bind("Sound Bindings", "Hurt", 			"None",   new ConfigDescription("", soundList));
-		JumpSound = 		  Config.Bind("Sound Bindings", "Jump", 			"Jump",   new ConfigDescription("", soundList));
-		LavaBellHitSound = 	  Config.Bind("Sound Bindings", "Lava Bell Hit", 	"None",   new ConfigDescription("", soundList));
-		NailArtSound = 		  Config.Bind("Sound Bindings", "Nail Art", 		"None",   new ConfigDescription("", soundList));
-		NeedolinSound = 	  Config.Bind("Sound Bindings", "Needolin", 		"None",   new ConfigDescription("", soundList));
-		PaleNailsSound = 	  Config.Bind("Sound Bindings", "Pail Nails", 		"None",   new ConfigDescription("", soundList));
-		RingTauntSound = 	  Config.Bind("Sound Bindings", "Ring Taunt", 		"None",   new ConfigDescription("", soundList));
-		RuneRageSound = 	  Config.Bind("Sound Bindings", "Rune Rage", 		"None",   new ConfigDescription("", soundList));
-		SharpdartSound = 	  Config.Bind("Sound Bindings", "Sharpdart", 		"None",   new ConfigDescription("", soundList));
-		SilkSoarSound = 	  Config.Bind("Sound Bindings", "Silk Soar", 		"None",   new ConfigDescription("", soundList));
-		SilkspearSound = 	  Config.Bind("Sound Bindings", "Silkspear", 		"ADEENO", new ConfigDescription("", soundList));
-		SwiftStepSound = 	  Config.Bind("Sound Bindings", "Swift Step", 		"None",   new ConfigDescription("", soundList));
-		TauntSound = 		  Config.Bind("Sound Bindings", "Taunt", 			"None",   new ConfigDescription("", soundList));
-		ThreadStormSound = 	  Config.Bind("Sound Bindings", "Thread Storm", 	"SHAW",   new ConfigDescription("", soundList));
-		WardingBellHitSound = Config.Bind("Sound Bindings", "Warding Bell Hit", "None",   new ConfigDescription("", soundList));
+		PluginEnabled 		= Config.Bind("General", 		"Enabled", 			true, 	  new ConfigDescription("", null, new ConfigurationManagerAttributes { Order = 3 }));
+		UseGameVolume 		= Config.Bind("General", 		"Use Game Volume", 	true, 	  new ConfigDescription("", null, new ConfigurationManagerAttributes { Order = 2 }));
+		AudioVolume 		= Config.Bind("General", 		"Custom Volume", 	0.125f,   new ConfigDescription("", new AcceptableValueRange<float>(0, 1), new ConfigurationManagerAttributes { Order = 1 }));
+		AttackSound 		= Config.Bind("Sound Bindings", "Attack", 			"None",   new ConfigDescription("", acceptableValues, new ConfigurationManagerAttributes { CustomDrawer = (entry) => MultiselectDrawer.Draw(entry, soundList) }));
+		BindSound 			= Config.Bind("Sound Bindings", "Bind", 			"None",   new ConfigDescription("", acceptableValues, new ConfigurationManagerAttributes { CustomDrawer = (entry) => MultiselectDrawer.Draw(entry, soundList) }));
+		ClawlineSound 		= Config.Bind("Sound Bindings", "Clawline", 		"None",   new ConfigDescription("", acceptableValues, new ConfigurationManagerAttributes { CustomDrawer = (entry) => MultiselectDrawer.Draw(entry, soundList) }));
+		CrossStitchSound 	= Config.Bind("Sound Bindings", "Cross Stitch", 	"None",   new ConfigDescription("", acceptableValues, new ConfigurationManagerAttributes { CustomDrawer = (entry) => MultiselectDrawer.Draw(entry, soundList) }));
+		DashAttackSound 	= Config.Bind("Sound Bindings", "Dash Attack", 		"None",   new ConfigDescription("", acceptableValues, new ConfigurationManagerAttributes { CustomDrawer = (entry) => MultiselectDrawer.Draw(entry, soundList) }));
+		DeathSound 			= Config.Bind("Sound Bindings", "Death", 			"None",   new ConfigDescription("", acceptableValues, new ConfigurationManagerAttributes { CustomDrawer = (entry) => MultiselectDrawer.Draw(entry, soundList) }));
+		DrifersCloakSound 	= Config.Bind("Sound Bindings", "Drifters Cloak", 	"None",   new ConfigDescription("", acceptableValues, new ConfigurationManagerAttributes { CustomDrawer = (entry) => MultiselectDrawer.Draw(entry, soundList) }));
+		FaydownCloakSound 	= Config.Bind("Sound Bindings", "Faydown Cloak", 	"None",   new ConfigDescription("", acceptableValues, new ConfigurationManagerAttributes { CustomDrawer = (entry) => MultiselectDrawer.Draw(entry, soundList) }));
+		HurtSound 			= Config.Bind("Sound Bindings", "Hurt", 			"None",   new ConfigDescription("", acceptableValues, new ConfigurationManagerAttributes { CustomDrawer = (entry) => MultiselectDrawer.Draw(entry, soundList) }));
+		JumpSound 			= Config.Bind("Sound Bindings", "Jump", 			"Jump",   new ConfigDescription("", acceptableValues, new ConfigurationManagerAttributes { CustomDrawer = (entry) => MultiselectDrawer.Draw(entry, soundList) }));
+		LavaBellHitSound 	= Config.Bind("Sound Bindings", "Lava Bell Hit", 	"None",   new ConfigDescription("", acceptableValues, new ConfigurationManagerAttributes { CustomDrawer = (entry) => MultiselectDrawer.Draw(entry, soundList) }));
+		NailArtSound 		= Config.Bind("Sound Bindings", "Nail Art", 		"None",   new ConfigDescription("", acceptableValues, new ConfigurationManagerAttributes { CustomDrawer = (entry) => MultiselectDrawer.Draw(entry, soundList) }));
+		NeedolinSound 		= Config.Bind("Sound Bindings", "Needolin", 		"None",   new ConfigDescription("", acceptableValues, new ConfigurationManagerAttributes { CustomDrawer = (entry) => MultiselectDrawer.Draw(entry, soundList) }));
+		PaleNailsSound 		= Config.Bind("Sound Bindings", "Pale Nails", 		"None",   new ConfigDescription("", acceptableValues, new ConfigurationManagerAttributes { CustomDrawer = (entry) => MultiselectDrawer.Draw(entry, soundList) }));
+		RingTauntSound 		= Config.Bind("Sound Bindings", "Ring Taunt", 		"None",   new ConfigDescription("", acceptableValues, new ConfigurationManagerAttributes { CustomDrawer = (entry) => MultiselectDrawer.Draw(entry, soundList) }));
+		RuneRageSound 		= Config.Bind("Sound Bindings", "Rune Rage", 		"None",   new ConfigDescription("", acceptableValues, new ConfigurationManagerAttributes { CustomDrawer = (entry) => MultiselectDrawer.Draw(entry, soundList) }));
+		SharpdartSound 		= Config.Bind("Sound Bindings", "Sharpdart", 		"None",   new ConfigDescription("", acceptableValues, new ConfigurationManagerAttributes { CustomDrawer = (entry) => MultiselectDrawer.Draw(entry, soundList) }));
+		SilkSoarSound 		= Config.Bind("Sound Bindings", "Silk Soar", 		"None",   new ConfigDescription("", acceptableValues, new ConfigurationManagerAttributes { CustomDrawer = (entry) => MultiselectDrawer.Draw(entry, soundList) }));
+		SilkspearSound 		= Config.Bind("Sound Bindings", "Silkspear", 		"ADEENO", new ConfigDescription("", acceptableValues, new ConfigurationManagerAttributes { CustomDrawer = (entry) => MultiselectDrawer.Draw(entry, soundList) }));
+		SwiftStepSound 		= Config.Bind("Sound Bindings", "Swift Step", 		"None",   new ConfigDescription("", acceptableValues, new ConfigurationManagerAttributes { CustomDrawer = (entry) => MultiselectDrawer.Draw(entry, soundList) }));
+		TauntSound 			= Config.Bind("Sound Bindings", "Taunt", 			"None",   new ConfigDescription("", acceptableValues, new ConfigurationManagerAttributes { CustomDrawer = (entry) => MultiselectDrawer.Draw(entry, soundList) }));
+		ThreadStormSound 	= Config.Bind("Sound Bindings", "Thread Storm", 	"SHAW",   new ConfigDescription("", acceptableValues, new ConfigurationManagerAttributes { CustomDrawer = (entry) => MultiselectDrawer.Draw(entry, soundList) }));
+		WardingBellHitSound = Config.Bind("Sound Bindings", "Warding Bell Hit", "None",   new ConfigDescription("", acceptableValues, new ConfigurationManagerAttributes { CustomDrawer = (entry) => MultiselectDrawer.Draw(entry, soundList) }));
 
 		Harmony harmony = new(PluginInfo.PLUGIN_GUID);
 		harmony.PatchAll();
@@ -133,13 +134,21 @@ public class Voicelines : BaseUnityPlugin
 		if (!PluginEnabled.Value || clipName == "None" || Instance == null)
 			return;
 
-		if (clipName == "Random")
+		var clipNames = clipName.Split(',')
+			.Select(s => s.Trim())
+			.Where(s => !string.IsNullOrEmpty(s))
+			.ToArray();
+
+		if (clipNames.Length == 0)
+			return;
+
+		string selectedClip;
+		if (clipNames.Contains("Random"))
 		{
 			var availableSounds = Instance.audioList.Where(sound => sound != "None").ToArray();
-
 			if (availableSounds.Length > 0)
 			{
-				clipName = availableSounds[Random.Range(0, availableSounds.Length)];
+				selectedClip = availableSounds[Random.Range(0, availableSounds.Length)];
 			}
 			else
 			{
@@ -147,10 +156,18 @@ public class Voicelines : BaseUnityPlugin
 				return;
 			}
 		}
+		else if (clipNames.Length == 1)
+		{
+			selectedClip = clipNames[0];
+		}
+		else
+		{
+			selectedClip = clipNames[Random.Range(0, clipNames.Length)];
+		}
 
-		Instance.Logger.LogInfo($"Playing sound: {clipName} for action: {action}");
+		Instance.Logger.LogInfo($"Playing sound: {selectedClip} for action: {action}");
 
-		if (Instance.audioClips.TryGetValue(clipName, out AudioClip clip))
+		if (Instance.audioClips.TryGetValue(selectedClip, out AudioClip clip))
 		{
 			if (Instance.playerAudioSource != null)
 			{
@@ -166,7 +183,7 @@ public class Voicelines : BaseUnityPlugin
 		}
 		else
 		{
-			Instance.Logger.LogError($"Could not play {clipName} - clip not available");
+			Instance.Logger.LogError($"Could not play {selectedClip} - clip not available");
 		}
 	}
 
