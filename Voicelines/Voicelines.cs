@@ -45,8 +45,8 @@ public class Voicelines : BaseUnityPlugin
 	internal static ConfigEntry<string> ThreadStormSound;
 
 	private AudioSource playerAudioSource;
-	private List<string> audioList = new List<string>();
-	private Dictionary<string, AudioClip> audioClips = new Dictionary<string, AudioClip>();
+	private readonly List<string> audioList = [];
+	private readonly Dictionary<string, AudioClip> audioClips = [];
 
 	private void Awake()
 	{
