@@ -43,7 +43,7 @@ public class Voicelines : BaseUnityPlugin
 	internal static ConfigEntry<string> TauntSound;
 	internal static ConfigEntry<string> ThreadStormSound;
 
-	private AudioSource audioSource;
+	private AudioSource playerAudioSource;
 	private List<string> audioList = new List<string>();
 	private Dictionary<string, AudioClip> audioClips = new Dictionary<string, AudioClip>();
 
@@ -80,11 +80,6 @@ public class Voicelines : BaseUnityPlugin
 		TauntSound = 		  Config.Bind("Sound Bindings", "Taunt", 			"None",   new ConfigDescription("", soundList));
 		ThreadStormSound = 	  Config.Bind("Sound Bindings", "Thread Storm", 	"SHAW",   new ConfigDescription("", soundList));
 		WardingBellHitSound = Config.Bind("Sound Bindings", "Warding Bell Hit", "None",   new ConfigDescription("", soundList));
-
-		GameObject audioObj = new("VoicelinesAudio");
-		DontDestroyOnLoad(audioObj);
-		audioSource = audioObj.AddComponent<AudioSource>();
-		audioSource.volume = AudioVolume.Value;
 
 		Harmony harmony = new(PluginInfo.PLUGIN_GUID);
 		harmony.PatchAll();
@@ -155,12 +150,17 @@ public class Voicelines : BaseUnityPlugin
 
 		if (Instance.audioClips.TryGetValue(clipName, out AudioClip clip))
 		{
-			Instance.audioSource.volume = AudioVolume.Value;
-			Instance.audioSource.PlayOneShot(clip);
+			if (Instance.playerAudioSource != null)
+			{
+				float originalVolume = Instance.playerAudioSource.volume;
+				Instance.playerAudioSource.volume = AudioVolume.Value;
+				Instance.playerAudioSource.PlayOneShot(clip);
+				Instance.playerAudioSource.volume = originalVolume;
+			}
 		}
 		else
 		{
-			Instance.Logger.LogError($"Could not play {clipName} - clip or audio source not available");
+			Instance.Logger.LogError($"Could not play {clipName} - clip not available");
 		}
 	}
 
@@ -250,6 +250,13 @@ public class Voicelines : BaseUnityPlugin
 		[HarmonyPostfix]
 		private static void Postfix(HeroController __instance)
 		{
+			Instance.playerAudioSource = __instance.GetComponent<AudioSource>();
+
+			if (Instance.playerAudioSource == null)
+			{
+				Instance.Logger.LogError("Could not find player AudioSource, audio will not play.");
+			}
+
 			__instance.StartCoroutine(SetupFsmMonitors(__instance));
 		}
 
