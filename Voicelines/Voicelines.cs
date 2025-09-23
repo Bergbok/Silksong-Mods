@@ -165,7 +165,7 @@ public class Voicelines : BaseUnityPlugin
 	}
 
 	[HarmonyPatch(typeof(HeroController), nameof(HeroController.Attack))]
-	private static class Attack_Patch
+	private static class HeroController_Attack_Patch
 	{
 		[HarmonyPrefix]
 		private static void Prefix(HeroController __instance, ref AttackDirection attackDir)
@@ -175,7 +175,7 @@ public class Voicelines : BaseUnityPlugin
 	}
 
 	[HarmonyPatch(typeof(HeroController), nameof(HeroController.Die))]
-	private static class Die_Patch
+	private static class HeroController_Die_Patch
 	{
 		[HarmonyPrefix]
 		private static void Prefix(HeroController __instance, ref bool nonLethal, ref bool frostDeath)
@@ -185,7 +185,7 @@ public class Voicelines : BaseUnityPlugin
 	}
 
 	[HarmonyPatch(typeof(HeroController), nameof(HeroController.DoDoubleJump))]
-	private static class DoDoubleJump_Patch
+	private static class HeroController_DoDoubleJump_Patch
 	{
 		[HarmonyPrefix]
 		private static void Prefix(HeroController __instance)
@@ -195,7 +195,7 @@ public class Voicelines : BaseUnityPlugin
 	}
 
 	[HarmonyPatch(typeof(HeroController), nameof(HeroController.HeroDamaged))]
-	private static class HeroDamaged_Patch
+	private static class HeroController_HeroDamaged_Patch
 	{
 		[HarmonyPrefix]
 		private static void Prefix(HeroController __instance)
@@ -205,7 +205,7 @@ public class Voicelines : BaseUnityPlugin
 	}
 
 	[HarmonyPatch(typeof(HeroController), nameof(HeroController.HeroDash))]
-	private static class HeroDash_Patch
+	private static class HeroController_HeroDash_Patch
 	{
 		[HarmonyPrefix]
 		private static void Prefix(HeroController __instance, ref bool startAlreadyDashing)
@@ -215,7 +215,7 @@ public class Voicelines : BaseUnityPlugin
 	}
 
 	[HarmonyPatch(typeof(HeroController), nameof(HeroController.OnHeroJumped))]
-	private static class OnHeroJumped_Patch
+	private static class HeroController_OnHeroJumped_Patch
 	{
 		[HarmonyPrefix]
 		private static void Prefix(HeroController __instance)
@@ -225,7 +225,7 @@ public class Voicelines : BaseUnityPlugin
 	}
 
 	[HarmonyPatch(typeof(HeroController), nameof(HeroController.RingTaunted))]
-	private static class RingTaunted_Patch
+	private static class HeroController_RingTaunted_Patch
 	{
 		[HarmonyPrefix]
 		private static void Prefix(HeroController __instance)
@@ -235,7 +235,7 @@ public class Voicelines : BaseUnityPlugin
 	}
 
 	[HarmonyPatch(typeof(HeroController), nameof(HeroController.SilkTaunted))]
-	private static class SilkTaunted_Patch
+	private static class HeroController_SilkTaunted_Patch
 	{
 		[HarmonyPrefix]
 		private static void Prefix(HeroController __instance)
@@ -245,7 +245,7 @@ public class Voicelines : BaseUnityPlugin
 	}
 
 	[HarmonyPatch(typeof(HeroController), nameof(HeroController.Start))]
-	private static class Start_Patch
+	private static class HeroController_Start_Patch
 	{
 		[HarmonyPostfix]
 		private static void Postfix(HeroController __instance)
@@ -257,10 +257,10 @@ public class Voicelines : BaseUnityPlugin
 		{
 			yield return null;
 
-			SendEvent_Patch.RegisterFsmMonitor(hornet.bellBindFSM, "bellBindFSM");
-			SendEvent_Patch.RegisterFsmMonitor(hornet.harpoonDashFSM, "harpoonDashFSM");
-			SendEvent_Patch.RegisterFsmMonitor(hornet.silkSpecialFSM, "silkSpecialFSM");
-			SendEvent_Patch.RegisterFsmMonitor(hornet.umbrellaFSM, "umbrellaFSM");
+			PlayMakerFSM_SendEvent_Patch.RegisterFsmMonitor(hornet.bellBindFSM, "bellBindFSM");
+			PlayMakerFSM_SendEvent_Patch.RegisterFsmMonitor(hornet.harpoonDashFSM, "harpoonDashFSM");
+			PlayMakerFSM_SendEvent_Patch.RegisterFsmMonitor(hornet.silkSpecialFSM, "silkSpecialFSM");
+			PlayMakerFSM_SendEvent_Patch.RegisterFsmMonitor(hornet.umbrellaFSM, "umbrellaFSM");
 
 			// foreach (var state in hornet.spellControl.FsmStates)
 			// {
@@ -274,7 +274,7 @@ public class Voicelines : BaseUnityPlugin
 	}
 
 	[HarmonyPatch(typeof(HeroController), nameof(HeroController.UseLavaBell))]
-	private static class UseLavaBell_Patch
+	private static class HeroController_UseLavaBell_Patch
 	{
 		[HarmonyPrefix]
 		private static void Prefix(HeroController __instance)
@@ -284,7 +284,7 @@ public class Voicelines : BaseUnityPlugin
 	}
 
 	[HarmonyPatch(typeof(HeroPerformanceRegion), nameof(HeroPerformanceRegion.SetIsPerforming))]
-	private static class SetIsPerforming_Patch
+	private static class HeroPerformanceRegion_SetIsPerforming_Patch
 	{
 		[HarmonyPostfix]
 		private static void Postfix(HeroPerformanceRegion __instance, ref bool value)
@@ -295,7 +295,7 @@ public class Voicelines : BaseUnityPlugin
 	}
 
 	[HarmonyPatch(typeof(PlayMakerFSM), nameof(PlayMakerFSM.SendEvent))]
-	private static class SendEvent_Patch
+	private static class PlayMakerFSM_SendEvent_Patch
 	{
 		private static readonly Dictionary<PlayMakerFSM, string> monitoredFsms = new Dictionary<PlayMakerFSM, string>();
 
@@ -371,7 +371,7 @@ public class Voicelines : BaseUnityPlugin
 	// Environmental damage currently not handled, this approach does not allow distinguishing between different damage sources.
 	// Alternatively patch SelectRandomClip and set __instance.volumeMin = 0f; __instance.volumeMax = 0f;
 	[HarmonyPatch(typeof(RandomAudioClipTable), nameof(RandomAudioClipTable.CanPlay))]
-	private static class CanPlay_Patch
+	private static class RandomAudioClipTable_CanPlay_Patch
 	{
 		[HarmonyPrefix]
 		private static bool Prefix(RandomAudioClipTable __instance)
