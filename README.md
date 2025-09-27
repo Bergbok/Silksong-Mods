@@ -54,6 +54,23 @@ https://github.com/user-attachments/assets/f8e58b28-b378-4999-8f3e-3baa8fb070e5
 
 Inspired by [something Skurry said](https://youtu.be/KoL2oD1TQuo?t=2930).
 
+### [Guts](./Guts)
+
+> It was much too big to be called a sword. Massive, thick, heavy and far too rough. Indeed, it was like a heap of raw iron.
+
+Lets you resize your needle.
+
+<details>
+<summary><strong>Screenshot</strong></summary>
+
+<div align=center>
+	<picture>
+		<img src='https://i.imgur.com/Q16mf36.jpeg' alt='Hunter crest nail slash with 3x scale modifier' />
+	</picture>
+</div>
+
+</details>
+
 ## Installing
 
 1. [Install BepInEx](https://docs.bepinex.dev/articles/user_guide/installation/index.html#installing-bepinex-1)
