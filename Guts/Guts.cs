@@ -27,6 +27,29 @@ public class Guts : BaseUnityPlugin
 		Logger.LogInfo("Plugin loaded and initialized.");
 	}
 
+	[HarmonyPatch(typeof(HeroController), nameof(HeroController.SetConfigGroup))]
+	private static class HeroController_SetConfigGroupt_Patch
+	{
+		private static readonly Dictionary<GameObject, Vector3> originalLocalScales = [];
+
+		[HarmonyPostfix]
+		private static void Postfix(HeroController __instance, ref HeroController.ConfigGroup configGroup, ref HeroController.ConfigGroup overrideGroup)
+		{
+			if (!PluginEnabled.Value) return;
+
+			if (!originalLocalScales.ContainsKey(configGroup.ChargeSlash))
+				originalLocalScales[configGroup.ChargeSlash] = configGroup.ChargeSlash.transform.localScale;
+
+			configGroup.ChargeSlash.transform.localScale = new Vector3(
+				originalLocalScales[configGroup.ChargeSlash].x * NailScale.Value,
+				originalLocalScales[configGroup.ChargeSlash].y * NailScale.Value,
+				originalLocalScales[configGroup.ChargeSlash].z * NailScale.Value
+			);
+
+			Instance.Logger.LogInfo($"ChargeSlash scale: {configGroup.ChargeSlash.transform.localScale}");
+		}
+	}
+
 	[HarmonyPatch(typeof(NailSlash), nameof(NailSlash.StartSlash))]
 	private static class NailSlash_StartSlash_Patch
 	{
