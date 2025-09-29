@@ -24,7 +24,7 @@ jobs:
 
       - name: Get auto-generated release notes
         id: generate-notes
-        uses: actions/github-script@v6
+        uses: actions/github-script@v8
         with:
           script: |
             const response = await github.rest.repos.generateReleaseNotes({
