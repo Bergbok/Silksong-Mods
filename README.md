@@ -71,6 +71,25 @@ Lets you resize your needle.
 
 </details>
 
+### [Scuttlebraced](./Scuttlebraced)
+
+Always-on [Scuttlebrace](https://hollowknight.wiki/w/Scuttlebrace).
+
+Barely works at the moment. Work in progress.
+
+<details>
+<summary><strong>Video</strong></summary>
+
+https://github.com/user-attachments/assets/df9e905e-c588-4f1f-bec6-4104c828a1c3
+
+</details>
+
+Also inspired by [something Skurry said](https://youtu.be/h8JBDvC4JlI?t=1948).
+
+### [GunZ](./GunZ)
+
+Lets you animation cancel most actions. Work in progress.
+
 ## Installing
 
 1. [Install BepInEx](https://docs.bepinex.dev/articles/user_guide/installation/index.html#installing-bepinex-1)
