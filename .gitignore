@@ -1,7 +1,10 @@
 /artifacts/
+/Resources/
 .idea/
 .obsidian/
 bin/
+build/
 obj/
+tcli-build/
 SilksongPath.props
 !/SilksongPath.props
