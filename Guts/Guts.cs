@@ -35,7 +35,13 @@ public class Guts : BaseUnityPlugin
 		[HarmonyPostfix]
 		private static void Postfix(HeroController __instance, ref HeroController.ConfigGroup configGroup, ref HeroController.ConfigGroup overrideGroup)
 		{
-			if (!PluginEnabled.Value) return;
+			if (!PluginEnabled.Value)
+			{
+				if (originalLocalScales.ContainsKey(configGroup.ChargeSlash))
+					configGroup.ChargeSlash.transform.localScale = originalLocalScales[configGroup.ChargeSlash];
+
+				return;
+			}
 
 			if (!originalLocalScales.ContainsKey(configGroup.ChargeSlash))
 				originalLocalScales[configGroup.ChargeSlash] = configGroup.ChargeSlash.transform.localScale;
@@ -55,7 +61,16 @@ public class Guts : BaseUnityPlugin
 		[HarmonyPrefix]
 		private static void Prefix(NailSlash __instance)
 		{
-			if (!PluginEnabled.Value) return;
+			if (!PluginEnabled.Value)
+			{
+				if (originalScales.ContainsKey(__instance))
+					__instance.scale = originalScales[__instance];
+
+				if (originalLongNeedleScales.ContainsKey(__instance))
+					__instance.longNeedleScale = originalLongNeedleScales[__instance];
+
+				return;
+			}
 
 			if (!originalScales.ContainsKey(__instance))
 			{
