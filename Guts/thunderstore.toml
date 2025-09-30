@@ -4,7 +4,7 @@ schemaVersion = '0.0.1'
 [package]
 namespace = 'Bergbok'
 name = 'Guts'
-versionNumber = '1.1.0'
+versionNumber = '1.1.1'
 description = 'Lets you resize your needle.'
 websiteUrl = 'https://github.com/Bergbok/Silksong-Mods'
 containsNsfwContent = false
