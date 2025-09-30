@@ -59,7 +59,7 @@ public class Voicelines : BaseUnityPlugin
 
 		PluginEnabled 		= Config.Bind("General", 		"Enabled", 			true, 	  new ConfigDescription("", null, new ConfigurationManagerAttributes { Order = 3 }));
 		UseGameVolume 		= Config.Bind("General", 		"Use Game Volume", 	true, 	  new ConfigDescription("", null, new ConfigurationManagerAttributes { Order = 2 }));
-		AudioVolume 		= Config.Bind("General", 		"Custom Volume", 	0.125f,   new ConfigDescription("", new AcceptableValueRange<float>(0, 1), new ConfigurationManagerAttributes { Order = 1 }));
+		AudioVolume 		= Config.Bind("General", 		"Custom Volume", 	0.125f,   new ConfigDescription("", new AcceptableValueRange<float>(0, 1), new ConfigurationManagerAttributes { Order = 1, ShowRangeAsPercent = true }));
 		AttackSound 		= Config.Bind("Sound Bindings", "Attack", 			"None",   new ConfigDescription("", acceptableValues, new ConfigurationManagerAttributes { CustomDrawer = (entry) => MultiselectDrawer.Draw(entry, soundList) }));
 		BindSound 			= Config.Bind("Sound Bindings", "Bind", 			"None",   new ConfigDescription("", acceptableValues, new ConfigurationManagerAttributes { CustomDrawer = (entry) => MultiselectDrawer.Draw(entry, soundList) }));
 		ClawlineSound 		= Config.Bind("Sound Bindings", "Clawline", 		"None",   new ConfigDescription("", acceptableValues, new ConfigurationManagerAttributes { CustomDrawer = (entry) => MultiselectDrawer.Draw(entry, soundList) }));
