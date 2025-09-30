@@ -105,7 +105,7 @@ Lets you animation cancel most actions. Work in progress.
 > eval $(echo "%command%" | ./run_bepinex.sh "Hollow Knight Silksong")
 > ```
 
-3. Download the mod you want to install from [Releases](github.com/Bergbok/Silksong-Mods/releases)
+3. Download the mod you want to install from [GitHub releases](github.com/Bergbok/Silksong-Mods/releases) or [Thunderstore](https://thunderstore.io/c/hollow-knight-silksong/p/Bergbok/?section=mods)
 4. Extract the downloaded archive to `silksong_path/BepInEx/plugins`
 5. Launch the game
 6. [Edit mod configs](https://docs.bepinex.dev/articles/user_guide/configuration.html#configuring-plugins) by using BepInEx's configuration manager (F1 by default), or by editing files in `silksong_path/BepInEx/plugins`
