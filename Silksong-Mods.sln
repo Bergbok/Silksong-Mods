@@ -4,6 +4,8 @@ VisualStudioVersion = 17.5.2.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Voicelines", "Voicelines\Voicelines.csproj", "{CF082B01-F971-2F4A-2679-77EB566DCFBB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scuttlebraced", "Scuttlebraced\Scuttlebraced.csproj", "{1E35186F-CB69-42F1-87B6-2E4AC093E9A7}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Guts", "Guts\Guts.csproj", "{1AA4FA2B-2704-4FA5-8D5A-ADC29E3B051B}"
 EndProject
 Global
@@ -16,6 +18,10 @@ Global
 		{CF082B01-F971-2F4A-2679-77EB566DCFBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CF082B01-F971-2F4A-2679-77EB566DCFBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CF082B01-F971-2F4A-2679-77EB566DCFBB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1E35186F-CB69-42F1-87B6-2E4AC093E9A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1E35186F-CB69-42F1-87B6-2E4AC093E9A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1E35186F-CB69-42F1-87B6-2E4AC093E9A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1E35186F-CB69-42F1-87B6-2E4AC093E9A7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1AA4FA2B-2704-4FA5-8D5A-ADC29E3B051B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1AA4FA2B-2704-4FA5-8D5A-ADC29E3B051B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1AA4FA2B-2704-4FA5-8D5A-ADC29E3B051B}.Release|Any CPU.ActiveCfg = Release|Any CPU
