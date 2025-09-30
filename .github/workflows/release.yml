@@ -5,8 +5,26 @@ on:
     tags:
       - "*-v*.*.*"
 
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
+  release-info:
+    runs-on: ubuntu-latest
+    outputs:
+      mod-name: ${{ steps.mod-name.outputs.result }}
+      version: ${{ steps.version.outputs.result }}
+    steps:
+      - name: Get Mod Name
+        id: mod-name
+        run: echo "result=$(echo ${{ github.ref_name }} | cut -d'-' -f1)" >> $GITHUB_OUTPUT
+
+      - name: Get Version
+        id: version
+        run: echo "result=$(echo ${{ github.ref_name }} | sed 's/^.*-v//')" >> $GITHUB_OUTPUT
   build:
+    needs: release-info
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -14,17 +32,30 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Get Mod Folder
-        id: get-mod-dir
-        run: echo "DIR=$(echo ${{ github.ref_name }} | cut -d'-' -f1)" >> $GITHUB_OUTPUT
+      - name: Install dotnet
+        uses: actions/setup-dotnet@v5.0.0
 
-      - name: Get Version
-        id: get-version
-        run: echo "VERSION=$(echo ${{ github.ref_name }} | sed 's/^.*-v//')" >> $GITHUB_OUTPUT
+      - name: Build
+        run: dotnet build ./${{ needs.release-info.outputs.mod-name }} -c Release
+
+      - name: Upload build archive
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: build
+          path: ${{ needs.release-info.outputs.mod-name  }}/bin/Release/${{ needs.release-info.outputs.mod-name }}.zip
+  github-release:
+    needs: [build, release-info]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download dist artifact
+        uses: actions/download-artifact@v5.0.0
+        with:
+          name: build
+          path: build
 
       - name: Get auto-generated release notes
-        id: generate-notes
-        uses: actions/github-script@v8
+        id: release-notes
+        uses: actions/github-script@v8.0.0
         with:
           script: |
             const response = await github.rest.repos.generateReleaseNotes({
@@ -35,44 +66,29 @@ jobs:
             return response.data.body;
           result-encoding: string
 
-      - name: Generate changelog
+      - name: Create CHANGELOG.md
         run: |
           cat << 'NOTESEOF' > CHANGELOG.md
-          ${{ steps.generate-notes.outputs.result }}
+          ${{ steps.release-notes.outputs.result }}
           NOTESEOF
 
-          PREVIOUS_TAG=$(git tag --sort=-version:refname | grep "^${{ steps.get-mod-dir.outputs.DIR }}-v" | head -n 2 | tail -n 1)
+          PREVIOUS_TAG=$(git tag --sort=-version:refname | grep "^${{ needs.release-info.outputs.mod-name }}-v" | head -n 2 | tail -n 1)
 
           if [ ! -z "$PREVIOUS_TAG" ]; then
-            echo "" >> CHANGELOG.md
-            echo "## Commit History" >> CHANGELOG.md
-            git log ${PREVIOUS_TAG}..HEAD --pretty=format:"- %s (%h)" --reverse >> CHANGELOG.md
-          fi
+            FILTERED_COMMITS=$(git log ${PREVIOUS_TAG}..HEAD --pretty=format:"- %s (%h)" --reverse \
+              | grep -i "^- [a-z]\+(${{ needs.release-info.outputs.mod-name }})" \
+              | sed "s/(${{ needs.release-info.outputs.mod-name }})//i")
 
-      - name: Install dotnet
-        uses: actions/setup-dotnet@v5.0.0
-        with:
-          dotnet-version: 9
-
-      - name: Build
-        run: dotnet build ./${{ steps.get-mod-dir.outputs.DIR }}
-
-      - name: Create archive
-        run: |
-          mkdir -p ${{ steps.get-mod-dir.outputs.DIR }}/bin/Publish
-          zip --junk-paths ${{ steps.get-mod-dir.outputs.DIR }}/bin/Publish/${{ github.ref_name }}.zip ${{ steps.get-mod-dir.outputs.DIR }}/bin/Debug/**/* --exclude *.deps.json
-
-          if [[ ${{steps.get-mod-dir.outputs.DIR}} == "Voicelines" ]]; then
-            cd Voicelines
-            zip ./bin/Publish/${{ github.ref_name }}.zip ./SFX/*.wav
-            cd -
+            if [ ! -z "$FILTERED_COMMITS" ]; then
+              sed -i '/^## What'\''s Changed$/a\\n'"$FILTERED_COMMITS" CHANGELOG.md
+            fi
           fi
 
       - name: Release
         uses: softprops/action-gh-release@v2.3.3
         with:
-          name: "${{ steps.get-mod-dir.outputs.DIR }} v${{ steps.get-version.outputs.VERSION }}"
-          files: ${{ steps.get-mod-dir.outputs.DIR }}/bin/Publish/*.zip
+          name: "${{ needs.release-info.outputs.mod-name }} v${{ needs.release-info.outputs.version }}"
+          files: build/${{ needs.release-info.outputs.mod-name }}.zip
           fail_on_unmatched_files: true
           body_path: CHANGELOG.md
           make_latest: true
