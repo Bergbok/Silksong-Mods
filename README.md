@@ -58,6 +58,21 @@ https://github.com/user-attachments/assets/f8e58b28-b378-4999-8f3e-3baa8fb070e5
 
 Inspired by [something Skurry said](https://youtu.be/KoL2oD1TQuo?t=2930).
 
+### [Scuttlebraced](./Scuttlebraced)
+
+Always-on [Scuttlebrace](https://hollowknight.wiki/w/Scuttlebrace).
+
+Barely works at the moment. Work in progress.
+
+<details>
+<summary><strong>Video</strong></summary>
+
+https://github.com/user-attachments/assets/df9e905e-c588-4f1f-bec6-4104c828a1c3
+
+</details>
+
+Also inspired by [something Skurry said](https://youtu.be/h8JBDvC4JlI?t=1948).
+
 ### [Guts](./Guts)
 
 > It was much too big to be called a sword. Massive, thick, heavy and far too rough. Indeed, it was like a heap of raw iron.
@@ -74,21 +89,6 @@ Lets you resize your needle.
 </div>
 
 </details>
-
-### [Scuttlebraced](./Scuttlebraced)
-
-Always-on [Scuttlebrace](https://hollowknight.wiki/w/Scuttlebrace).
-
-Barely works at the moment. Work in progress.
-
-<details>
-<summary><strong>Video</strong></summary>
-
-https://github.com/user-attachments/assets/df9e905e-c588-4f1f-bec6-4104c828a1c3
-
-</details>
-
-Also inspired by [something Skurry said](https://youtu.be/h8JBDvC4JlI?t=1948).
 
 ### [GunZ](./GunZ)
 
@@ -131,9 +131,3 @@ dotnet build
 		<img src='https://i.imgur.com/ACl8IP3.png' alt='Hornet sitting' width=100 />
 	</picture>
 </div>
-
-<!--
-## Ideas
-
-- [ ] GunZ mod (make all animations cancellable)
--->
