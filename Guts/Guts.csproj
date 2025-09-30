@@ -26,21 +26,23 @@
 		<Compile Include="..\ConfigurationManagerAttributes.cs" Link="ConfigurationManagerAttributes.cs" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<Binaries Include="$(TargetPath)" />
+		<Binaries Include="$(TargetDir)/$(TargetName).pdb" />
+	</ItemGroup>
+
 	<Target Name="CopyMod" AfterTargets="PostBuildEvent" Condition="'$(SilksongFolder)' != ''">
-		<ItemGroup>
-			<Binaries Include="$(TargetPath)"/>
-			<Binaries Include="$(TargetDir)/$(TargetName).pdb"/>
-		</ItemGroup>
-
 		<Copy SourceFiles="@(Binaries)" DestinationFolder="$(SilksongFolder)/BepInEx/plugins/$(TargetName)" />
+	</Target>
 
+	<Target Name="CreateReleaseZip" AfterTargets="PostBuildEvent" Condition="'$(Configuration)' == 'Release'">
 		<PropertyGroup>
-			<ExportFolder>bin/Publish</ExportFolder>
+			<ExportFolder>bin/Release</ExportFolder>
 		</PropertyGroup>
 
-		<RemoveDir Directories="$(IntermediateOutputPath)/archive"/>
-		<MakeDir Directories="$(ExportFolder)"/>
-		<Copy SourceFiles="@(Binaries)" DestinationFolder="$(IntermediateOutputPath)/archive"/>
-		<ZipDirectory SourceDirectory="$(IntermediateOutputPath)/archive" DestinationFile="$(ExportFolder)/$(TargetName).zip" Overwrite="True"/>
+		<MakeDir Directories="$(ExportFolder)" />
+		<RemoveDir Directories="$(IntermediateOutputPath)/archive" />
+		<Copy SourceFiles="@(Binaries)" DestinationFolder="$(IntermediateOutputPath)/archive" />
+		<ZipDirectory SourceDirectory="$(IntermediateOutputPath)/archive" DestinationFile="$(ExportFolder)/$(TargetName).zip" Overwrite="True" />
 	</Target>
 </Project>
