@@ -1,6 +1,6 @@
-## Showcase
+# Showcase
 
-### [Voicelines](./Voicelines)
+## [Voicelines](./Voicelines)
 
 Plays sound effects when Hornet takes certain actions.  
 Comes with [some sound effects from the first game](./Voicelines/SFX/).
@@ -58,7 +58,7 @@ https://github.com/user-attachments/assets/f8e58b28-b378-4999-8f3e-3baa8fb070e5
 
 Inspired by [something Skurry said](https://youtu.be/KoL2oD1TQuo?t=2930).
 
-### [Scuttlebraced](./Scuttlebraced)
+## [Scuttlebraced](./Scuttlebraced)
 
 Always-on [Scuttlebrace](https://hollowknight.wiki/w/Scuttlebrace).
 
@@ -73,7 +73,7 @@ https://github.com/user-attachments/assets/df9e905e-c588-4f1f-bec6-4104c828a1c3
 
 Also inspired by [something Skurry said](https://youtu.be/h8JBDvC4JlI?t=1948).
 
-### [Guts](./Guts)
+## [Guts](./Guts)
 
 > It was much too big to be called a sword. Massive, thick, heavy and far too rough. Indeed, it was like a heap of raw iron.
 
@@ -90,11 +90,11 @@ Lets you resize your needle.
 
 </details>
 
-### [GunZ](./GunZ)
+## [GunZ](./GunZ)
 
 Lets you animation cancel most actions. Work in progress.
 
-## Installing
+# Installing
 
 1. [Install BepInEx](https://docs.bepinex.dev/articles/user_guide/installation/index.html#installing-bepinex-1)
 2. If running through Steam on [*nix](https://en.wikipedia.org/wiki/Unix-like) systems, [set up launch options](https://docs.bepinex.dev/articles/advanced/steam_interop.html#2-set-up-permissions)
@@ -110,7 +110,7 @@ Lets you animation cancel most actions. Work in progress.
 5. Launch the game
 6. [Edit mod configs](https://docs.bepinex.dev/articles/user_guide/configuration.html#configuring-plugins) by using BepInEx's configuration manager (F1 by default), or by editing files in `silksong_path/BepInEx/plugins`
 
-## Building
+# Building
 
 Requires [.NET](https://dotnet.microsoft.com/en-us/download) to be installed.
 
