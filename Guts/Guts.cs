@@ -40,13 +40,9 @@ public class Guts : BaseUnityPlugin
 			if (!originalLocalScales.ContainsKey(configGroup.ChargeSlash))
 				originalLocalScales[configGroup.ChargeSlash] = configGroup.ChargeSlash.transform.localScale;
 
-			configGroup.ChargeSlash.transform.localScale = new Vector3(
-				originalLocalScales[configGroup.ChargeSlash].x * NailScale.Value,
-				originalLocalScales[configGroup.ChargeSlash].y * NailScale.Value,
-				originalLocalScales[configGroup.ChargeSlash].z * NailScale.Value
-			);
+			configGroup.ChargeSlash.transform.localScale = originalLocalScales[configGroup.ChargeSlash] * NailScale.Value;
 
-			Instance.Logger.LogInfo($"ChargeSlash scale: {configGroup.ChargeSlash.transform.localScale}");
+			// Instance.Logger.LogInfo($"ChargeSlash scale: {configGroup.ChargeSlash.transform.localScale}");
 		}
 	}
 
@@ -67,17 +63,8 @@ public class Guts : BaseUnityPlugin
 				originalLongNeedleScales[__instance] = __instance.longNeedleScale;
 			}
 
-			__instance.scale = new Vector3(
-				originalScales[__instance].x * NailScale.Value,
-				originalScales[__instance].y * NailScale.Value,
-				originalScales[__instance].z * NailScale.Value
-			);
-
-			__instance.longNeedleScale = new Vector3(
-				originalLongNeedleScales[__instance].x * NailScale.Value,
-				originalLongNeedleScales[__instance].y * NailScale.Value,
-				originalLongNeedleScales[__instance].z * NailScale.Value
-			);
+			__instance.scale = originalScales[__instance] * NailScale.Value;
+			__instance.longNeedleScale = originalLongNeedleScales[__instance] * NailScale.Value;
 
 			// Instance.Logger.LogInfo($"Modified scale: {__instance.scale}, longNeedleScale: {__instance.longNeedleScale}");
 		}
