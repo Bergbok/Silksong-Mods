@@ -8,6 +8,10 @@ Comes with [some sound effects from the first game](./Voicelines/SFX/).
 Supports custom sound effects, simply add them to the SFX folder after installing.  
 Any [file format supported by Unity](https://docs.unity3d.com/6000.2/Documentation/Manual/AudioFiles-compatibility.html) should work.
 
+Multiple sound effects can be selected and it'll pick a random one.  
+You can manipulate odds by editing the configuration file.  
+Enter sounds multiple times to increase odds or sounds that don't exist for a chance of not playing anything.
+
 <details>
 <summary><strong>Videos</strong></summary>
 
