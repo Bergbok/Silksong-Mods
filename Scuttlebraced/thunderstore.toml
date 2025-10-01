@@ -5,7 +5,7 @@ schemaVersion = '0.0.1'
 namespace = 'Bergbok'
 name = 'Scuttlebraced'
 versionNumber = '0.0.1'
-description = 'Always-on Scuttlebrace'
+description = 'Always-on Scuttlebrace.'
 websiteUrl = 'https://github.com/Bergbok/Silksong-Mods'
 containsNsfwContent = false
 [package.dependencies]
@@ -23,4 +23,4 @@ target = '.'
 repository = 'https://thunderstore.io'
 communities = [ 'hollow-knight-silksong' ]
 [publish.categories]
-hollow-knight-silksong = [ 'audio', 'misc', 'mods', 'tools' ]
+hollow-knight-silksong = [ 'misc', 'mods', 'tools' ]

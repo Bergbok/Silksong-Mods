@@ -23,4 +23,4 @@ target = '.'
 repository = 'https://thunderstore.io'
 communities = [ 'hollow-knight-silksong' ]
 [publish.categories]
-hollow-knight-silksong = [ 'audio', 'misc', 'mods', 'tools' ]
+hollow-knight-silksong = [ 'misc', 'mods', 'tools' ]
