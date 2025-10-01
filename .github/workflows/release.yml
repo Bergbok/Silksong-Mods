@@ -50,7 +50,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Download dist artifact
+      - name: Download build artifact
         uses: actions/download-artifact@v5.0.0
         with:
           name: build
@@ -105,11 +105,17 @@ jobs:
           sparse-checkout: ${{ needs.release-info.outputs.mod-name }}
           sparse-checkout-cone-mode: false
 
-      - name: Download dist artifact
+      - name: Download build artifact
         uses: actions/download-artifact@v5.0.0
         with:
           name: build
           path: ${{ needs.release-info.outputs.mod-name }}/build
+
+      - name: Extract build archive
+        run: |
+          cd "${{ needs.release-info.outputs.mod-name }}/build"
+          unzip *.zip
+          rm *.zip
 
       - name: Install dotnet
         uses: actions/setup-dotnet@v5.0.0
