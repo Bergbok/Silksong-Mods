@@ -92,6 +92,7 @@ jobs:
         uses: softprops/action-gh-release@v2.3.3
         with:
           name: "${{ needs.get-release-info.outputs.mod-name }} v${{ needs.get-release-info.outputs.version }}"
+          prerelease: ${{ startsWith(needs.get-release-info.outputs.version, '0.') }}
           files: build/${{ needs.get-release-info.outputs.mod-name }}.zip
           fail_on_unmatched_files: true
           body_path: CHANGELOG.md
