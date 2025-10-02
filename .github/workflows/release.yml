@@ -1,4 +1,5 @@
 name: Release
+run-name: Release ${{ github.ref_name }}
 
 on:
   push:
@@ -10,7 +11,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  release-info:
+  get-release-info:
     runs-on: ubuntu-latest
     outputs:
       mod-name: ${{ steps.mod-name.outputs.result }}
@@ -24,7 +25,7 @@ jobs:
         id: version
         run: echo "result=$(echo ${{ github.ref_name }} | sed 's/^.*-v//')" >> $GITHUB_OUTPUT
   build:
-    needs: release-info
+    needs: get-release-info
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -34,15 +35,15 @@ jobs:
         uses: actions/setup-dotnet@v5.0.0
 
       - name: Build
-        run: dotnet build ./${{ needs.release-info.outputs.mod-name }} -c Release
+        run: dotnet build ./${{ needs.get-release-info.outputs.mod-name }} -c Release
 
       - name: Upload build archive
         uses: actions/upload-artifact@v4.6.2
         with:
           name: build
-          path: ${{ needs.release-info.outputs.mod-name  }}/bin/Release/${{ needs.release-info.outputs.mod-name }}.zip
+          path: ${{ needs.get-release-info.outputs.mod-name  }}/bin/Release/${{ needs.get-release-info.outputs.mod-name }}.zip
   github-release:
-    needs: [build, release-info]
+    needs: [build, get-release-info]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -75,58 +76,103 @@ jobs:
           ${{ steps.release-notes.outputs.result }}
           NOTESEOF
 
-          PREVIOUS_TAG=$(git tag --sort=-version:refname | grep "^${{ needs.release-info.outputs.mod-name }}-v" | head -n 2 | tail -n 1)
+          PREVIOUS_TAG=$(git tag --sort=-version:refname | grep "^${{ needs.get-release-info.outputs.mod-name }}-v" | head -n 2 | tail -n 1)
 
           if [ ! -z "$PREVIOUS_TAG" ]; then
             FILTERED_COMMITS=$(git log ${PREVIOUS_TAG}..HEAD --pretty=format:"- %s (%h)" --reverse \
-              | grep -i "^- [a-z]\+(${{ needs.release-info.outputs.mod-name }})" \
-              | sed "s/(${{ needs.release-info.outputs.mod-name }})//i")
+              | grep -i "^- [a-z]\+(${{ needs.get-release-info.outputs.mod-name }})" \
+              | sed "s/(${{ needs.get-release-info.outputs.mod-name }})//i")
 
             if [ ! -z "$FILTERED_COMMITS" ]; then
-              sed -i '/^## What'\''s Changed$/a\\n'"$FILTERED_COMMITS" CHANGELOG.md
+              printf '%s\n' "$FILTERED_COMMITS" | sed -i -e '/^## What'\''s Changed$/r /dev/stdin' -e 's/^\* /- /' CHANGELOG.md
             fi
           fi
 
       - name: Release
         uses: softprops/action-gh-release@v2.3.3
         with:
-          name: "${{ needs.release-info.outputs.mod-name }} v${{ needs.release-info.outputs.version }}"
-          files: build/${{ needs.release-info.outputs.mod-name }}.zip
+          name: "${{ needs.get-release-info.outputs.mod-name }} v${{ needs.get-release-info.outputs.version }}"
+          files: build/${{ needs.get-release-info.outputs.mod-name }}.zip
           fail_on_unmatched_files: true
           body_path: CHANGELOG.md
           make_latest: true
   thunderstore-release:
-    needs: [build, release-info]
+    needs: [build, get-release-info]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Thunderstore CLI config
         uses: actions/checkout@v5.0.0
         with:
-          sparse-checkout: ${{ needs.release-info.outputs.mod-name }}
+          sparse-checkout: ${{ needs.get-release-info.outputs.mod-name }}
           sparse-checkout-cone-mode: false
 
+      - name: Check if release should be skipped
+        id: skip-release
+        run: |
+          cd ${{ needs.get-release-info.outputs.mod-name }}
+
+          if [ ! -f "thunderstore.toml" ]; then
+            echo "thunderstore.toml not found, skipping..."
+            echo "result=true" > $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          get_toml_value() {
+            local file="$1"
+            local section="$2"
+            local key="$3"
+
+            get_section() {
+                local file="$1"
+                local section="$2"
+                sed -n "/^\[$section\]/,/^\[/p" "$file" | sed '$d'
+            }
+
+            get_section "$file" "$section" | grep "^${key}[[:space:]]*=" | cut -d '=' -f2- | sed 's/^[[:space:]]*//; s/[[:space:]]*$//; s/^["'\'']//; s/["'\'']$//'
+          }
+
+          NAMESPACE=$(get_toml_value "thunderstore.toml" "package" "namespace")
+          MOD_NAME=$(get_toml_value "thunderstore.toml" "package" "name")
+          VERSION=$(get_toml_value "thunderstore.toml" "package" "versionNumber")
+          REPOSITORY=$(get_toml_value "thunderstore.toml" "publish" "repository")
+
+          echo "Checking $REPOSITORY/package/download/$NAMESPACE/$MOD_NAME/$VERSION/"
+
+          if ! curl --head --silent --fail "$REPOSITORY/package/download/$NAMESPACE/$MOD_NAME/$VERSION/" 2>&1 | grep -q "HTTP/2 404"; then
+            echo "Release already exists on Thunderstore, skipping..."
+            echo "result=true" > $GITHUB_OUTPUT
+          else
+            echo "result=false" > $GITHUB_OUTPUT
+          fi
+
       - name: Download build artifact
+        if: steps.skip-release.outputs.result == 'false'
         uses: actions/download-artifact@v5.0.0
         with:
           name: build
-          path: ${{ needs.release-info.outputs.mod-name }}/build
+          path: ${{ needs.get-release-info.outputs.mod-name }}/build
 
       - name: Extract build archive
+        if: steps.skip-release.outputs.result == 'false'
         run: |
-          cd "${{ needs.release-info.outputs.mod-name }}/build"
+          cd "${{ needs.get-release-info.outputs.mod-name }}/build"
           unzip *.zip
           rm *.zip
 
       - name: Install dotnet
+        if: steps.skip-release.outputs.result == 'false'
         uses: actions/setup-dotnet@v5.0.0
 
       - name: Install Thunderstore CLI
+        if: steps.skip-release.outputs.result == 'false'
         run: dotnet tool install --global tcli
 
       - name: Create CHANGELOG.md
-        run: echo "Changelogs available [on GitHub](https://github.com/Bergbok/Silksong-Mods/releases?q=${{ needs.release-info.outputs.mod-name  }})" > ${{ needs.release-info.outputs.mod-name  }}/build/CHANGELOG.md
+        if: steps.skip-release.outputs.result == 'false'
+        run: echo "Changelogs available [on GitHub](https://github.com/Bergbok/Silksong-Mods/releases?q=${{ needs.get-release-info.outputs.mod-name  }})" > ${{ needs.get-release-info.outputs.mod-name  }}/build/CHANGELOG.md
 
       - name: Release
+        if: steps.skip-release.outputs.result == 'false'
         run: |
-          cd ${{ needs.release-info.outputs.mod-name }}
+          cd ${{ needs.get-release-info.outputs.mod-name }}
           tcli publish --token ${{ secrets.THUNDERSTORE_TOKEN }}
