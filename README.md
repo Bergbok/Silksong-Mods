@@ -96,6 +96,8 @@ Lets you animation cancel most actions. Work in progress.
 
 # Installing
 
+> If you don't want to manually install you could use a Thunderstore mod manager like [r2modman](https://github.com/ebkr/r2modmanPlus) or [Gale](https://github.com/Kesomannen/gale)
+
 1. [Install BepInEx](https://docs.bepinex.dev/articles/user_guide/installation/index.html#installing-bepinex-1)
 2. If running through Steam on [*nix](https://en.wikipedia.org/wiki/Unix-like) systems, [set up launch options](https://docs.bepinex.dev/articles/advanced/steam_interop.html#2-set-up-permissions)
 
