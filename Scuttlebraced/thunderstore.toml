@@ -4,7 +4,7 @@ schemaVersion = '0.0.1'
 [package]
 namespace = 'Bergbok'
 name = 'Scuttlebraced'
-versionNumber = '0.0.1'
+versionNumber = '0.0.2'
 description = 'Always-on Scuttlebrace.'
 websiteUrl = 'https://github.com/Bergbok/Silksong-Mods'
 containsNsfwContent = false
