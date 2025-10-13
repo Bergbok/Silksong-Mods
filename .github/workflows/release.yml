@@ -89,7 +89,7 @@ jobs:
           fi
 
       - name: Release
-        uses: softprops/action-gh-release@v2.3.4
+        uses: softprops/action-gh-release@v2.4.1
         with:
           name: "${{ needs.get-release-info.outputs.mod-name }} v${{ needs.get-release-info.outputs.version }}"
           prerelease: ${{ startsWith(needs.get-release-info.outputs.version, '0.') }}
