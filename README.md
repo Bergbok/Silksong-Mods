@@ -2,6 +2,8 @@
 
 ## [Voicelines](./Voicelines)
 
+[![Thunderstore Link](https://img.shields.io/thunderstore/dt/Bergbok/Voicelines?style=flat&logo=thunderstore&logoColor=de1f31&labelColor=fafafa&color=de1f31)](https://thunderstore.io/c/hollow-knight-silksong/p/Bergbok/Voicelines)
+
 Plays sound effects when Hornet takes certain actions.  
 Comes with [some sound effects from the first game](./Voicelines/SFX/).
 
@@ -60,6 +62,8 @@ Inspired by [something Skurry said](https://youtu.be/KoL2oD1TQuo?t=2930).
 
 ## [Scuttlebraced](./Scuttlebraced)
 
+[![Thunderstore Link](https://img.shields.io/thunderstore/dt/Bergbok/Scuttlebraced?style=flat&logo=thunderstore&logoColor=de1f31&labelColor=fafafa&color=de1f31)](https://thunderstore.io/c/hollow-knight-silksong/p/Bergbok/Scuttlebraced)
+
 Always-on [Scuttlebrace](https://hollowknight.wiki/w/Scuttlebrace).
 
 Barely works at the moment. Work in progress.
@@ -74,6 +78,8 @@ https://github.com/user-attachments/assets/df9e905e-c588-4f1f-bec6-4104c828a1c3
 Also inspired by [something Skurry said](https://youtu.be/h8JBDvC4JlI?t=1948).
 
 ## [Guts](./Guts)
+
+[![Thunderstore Link](https://img.shields.io/thunderstore/dt/Bergbok/Guts?style=flat&logo=thunderstore&logoColor=de1f31&labelColor=fafafa&color=de1f31)](https://thunderstore.io/c/hollow-knight-silksong/p/Bergbok/Guts)
 
 > It was much too big to be called a sword. Massive, thick, heavy and far too rough. Indeed, it was like a heap of raw iron.
 
@@ -91,6 +97,8 @@ Lets you resize your needle.
 </details>
 
 ## [GunZ](./GunZ)
+
+[![Thunderstore Link](https://img.shields.io/thunderstore/dt/Bergbok/GunZ?style=flat&logo=thunderstore&logoColor=de1f31&labelColor=fafafa&color=de1f31)](https://thunderstore.io/c/hollow-knight-silksong/p/Bergbok/GunZ)
 
 Lets you animation cancel most actions. Work in progress.
 
@@ -133,3 +141,7 @@ dotnet build
 		<img src='https://i.imgur.com/ACl8IP3.png' alt='Hornet sitting' width=100 />
 	</picture>
 </div>
+
+<!--
+https://thunderstore.io/api/experimental/community/hollow-knight-silksong/category/
+-->
