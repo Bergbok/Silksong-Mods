@@ -53,7 +53,7 @@ public class Guts : BaseUnityPlugin
 
 			chargeSlash.transform.localScale = originalLocalScales[chargeSlash] * NailScale.Value;
 
-			// Instance.Logger.LogInfo($"ChargeSlash scale: {configGroup.ChargeSlash.transform.localScale}");
+			// Instance.Logger.LogInfo($"ChargeSlash scale: {chargeSlash.transform.localScale}");
 		}
 	}
 
