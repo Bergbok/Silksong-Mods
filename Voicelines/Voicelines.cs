@@ -24,6 +24,7 @@ public class Voicelines : BaseUnityPlugin
 	internal static ConfigEntry<bool> ReplaceGameSounds;
 	internal static ConfigEntry<bool> UseGameVolume;
 	internal static ConfigEntry<float> AudioVolume;
+	internal static ConfigEntry<float> TriggerChance;
 	internal static ConfigEntry<string> AttackSound;
 	internal static ConfigEntry<string> BindSound;
 	internal static ConfigEntry<string> WardingBellHitSound;
@@ -73,6 +74,7 @@ public class Voicelines : BaseUnityPlugin
 		ReplaceGameSounds 	= Config.Bind("General", 		"Replace Game Sounds", true, 	 new ConfigDescription("", null, new ConfigurationManagerAttributes { Order = 4 }));
 		UseGameVolume 		= Config.Bind("General", 		"Use Game Volume", 	   true, 	 new ConfigDescription("", null, new ConfigurationManagerAttributes { Order = 3 }));
 		AudioVolume 		= Config.Bind("General", 		"Custom Volume", 	   0.125f,   new ConfigDescription("", new AcceptableValueRange<float>(0, 1), new ConfigurationManagerAttributes { Order = 2, ShowRangeAsPercent = true }));
+		TriggerChance 		= Config.Bind("General", 		"Trigger Chance", 	   1f,   	 new ConfigDescription("", new AcceptableValueRange<float>(0, 1), new ConfigurationManagerAttributes { Order = 1, ShowRangeAsPercent = true }));
 		AttackSound 		= Config.Bind("Sound Bindings", "Attack", 			   "None",   new ConfigDescription("", acceptableValues, new ConfigurationManagerAttributes { CustomDrawer = (entry) => MultiselectDrawer.Draw(entry, soundList) }));
 		BindSound 			= Config.Bind("Sound Bindings", "Bind", 			   "None",   new ConfigDescription("", acceptableValues, new ConfigurationManagerAttributes { CustomDrawer = (entry) => MultiselectDrawer.Draw(entry, soundList) }));
 		ClawlineSound 		= Config.Bind("Sound Bindings", "Clawline", 		   "None",   new ConfigDescription("", acceptableValues, new ConfigurationManagerAttributes { CustomDrawer = (entry) => MultiselectDrawer.Draw(entry, soundList) }));
@@ -146,6 +148,11 @@ public class Voicelines : BaseUnityPlugin
 	{
 		if (!PluginEnabled.Value || clipName == "None" || Instance == null)
 			return;
+
+		if (Random.value > TriggerChance.Value) {
+			Instance.Logger.LogInfo($"Skipping sound for action: {action} due to trigger chance");
+			return;
+		}
 
 		var clipNames = clipName.Split(',')
 			.Select(s => s.Trim())
