@@ -2,6 +2,9 @@ using BepInEx;
 using BepInEx.Configuration;
 using GlobalEnums;
 using HarmonyLib;
+using HutongGames.PlayMaker;
+using HutongGames.PlayMaker.Actions;
+using Silksong.FsmUtil;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -48,6 +51,14 @@ public class Voicelines : BaseUnityPlugin
 	private AudioSource playerAudioSource;
 	private readonly List<string> audioList = [];
 	private readonly Dictionary<string, AudioClip> audioClips = [];
+	private class BlockEntry
+	{
+		public string ID;
+		public string Pattern;
+		public float ExpiryTime;
+	}
+
+	private static readonly List<BlockEntry> ClipsToBlock = new();
 
 	private void Awake()
 	{
@@ -131,7 +142,7 @@ public class Voicelines : BaseUnityPlugin
 		}
 	}
 
-	public static void PlayAudio(string action, string clipName)
+	public static void PlayAudio(string action, string clipName, string blockPattern = "")
 	{
 		if (!PluginEnabled.Value || clipName == "None" || Instance == null)
 			return;
@@ -171,6 +182,20 @@ public class Voicelines : BaseUnityPlugin
 
 		if (Instance.audioClips.TryGetValue(selectedClip, out AudioClip clip))
 		{
+			if (!string.IsNullOrEmpty(blockPattern) && ReplaceGameSounds.Value)
+			{
+				var blockID = System.Guid.NewGuid().ToString();
+				var entry = new BlockEntry
+				{
+					ID = blockID,
+					Pattern = blockPattern,
+					ExpiryTime = Time.time + clip.length + 0.2f
+				};
+				ClipsToBlock.Add(entry);
+				// Instance.Logger.LogInfo($"Added block pattern: {blockPattern} (expires in {clip.length + 0.2f}s)");
+				Instance.StartCoroutine(CleanupBlockEntry(blockID, clip.length + 0.2f));
+			}
+
 			if (Instance.playerAudioSource != null)
 			{
 				if (UseGameVolume.Value)
@@ -189,24 +214,25 @@ public class Voicelines : BaseUnityPlugin
 		}
 	}
 
+	private static IEnumerator CleanupBlockEntry(string blockID, float delay)
+	{
+		yield return new WaitForSeconds(delay);
+
+		var entry = ClipsToBlock.FirstOrDefault(e => e.ID == blockID);
+		if (entry != null)
+		{
+			// Instance.Logger.LogInfo($"Auto-removing expired block pattern: {entry.Pattern}");
+			ClipsToBlock.Remove(entry);
+		}
+	}
+
 	[HarmonyPatch(typeof(HeroController), nameof(HeroController.Attack))]
 	private static class HeroController_Attack_Patch
 	{
 		[HarmonyPrefix]
 		private static void Prefix(HeroController __instance, ref AttackDirection attackDir)
 		{
-			PlayAudio("Attack", AttackSound.Value);
-		}
-	}
-
-	[HarmonyPatch(typeof(HeroController), nameof(HeroController.CanSuperJump))]
-	private static class HeroController_CanSuperJump_Patch
-	{
-		[HarmonyPostfix]
-		private static void Postfix(HeroController __instance, ref bool __result)
-		{
-			if (__result)
-				PlayAudio("Silk Soar", SilkSoarSound.Value);
+			PlayAudio("Attack", AttackSound.Value, "^a");
 		}
 	}
 
@@ -216,7 +242,7 @@ public class Voicelines : BaseUnityPlugin
 		[HarmonyPrefix]
 		private static void Prefix(HeroController __instance, ref bool nonLethal, ref bool frostDeath)
 		{
-			PlayAudio("Death", DeathSound.Value);
+			PlayAudio("Death", DeathSound.Value, "^hero_damage");
 		}
 	}
 
@@ -226,7 +252,7 @@ public class Voicelines : BaseUnityPlugin
 		[HarmonyPrefix]
 		private static void Prefix(HeroController __instance)
 		{
-			PlayAudio("Faydown Cloak", FaydownCloakSound.Value);
+			PlayAudio("Faydown Cloak", FaydownCloakSound.Value, "^g");
 		}
 	}
 
@@ -236,7 +262,7 @@ public class Voicelines : BaseUnityPlugin
 		[HarmonyPrefix]
 		private static void Prefix(HeroController __instance)
 		{
-			PlayAudio("Hurt", HurtSound.Value);
+			PlayAudio("Hurt", HurtSound.Value, "^hero_damage");
 		}
 	}
 
@@ -246,7 +272,7 @@ public class Voicelines : BaseUnityPlugin
 		[HarmonyPrefix]
 		private static void Prefix(HeroController __instance, ref bool startAlreadyDashing)
 		{
-			PlayAudio("Dash", SwiftStepSound.Value);
+			PlayAudio("Swift Step", SwiftStepSound.Value, "^g");
 		}
 	}
 
@@ -256,27 +282,7 @@ public class Voicelines : BaseUnityPlugin
 		[HarmonyPrefix]
 		private static void Prefix(HeroController __instance)
 		{
-			PlayAudio("Jump", JumpSound.Value);
-		}
-	}
-
-	[HarmonyPatch(typeof(HeroController), nameof(HeroController.RingTaunted))]
-	private static class HeroController_RingTaunted_Patch
-	{
-		[HarmonyPrefix]
-		private static void Prefix(HeroController __instance)
-		{
-			PlayAudio("RingTaunt", RingTauntSound.Value);
-		}
-	}
-
-	[HarmonyPatch(typeof(HeroController), nameof(HeroController.SilkTaunted))]
-	private static class HeroController_SilkTaunted_Patch
-	{
-		[HarmonyPrefix]
-		private static void Prefix(HeroController __instance)
-		{
-			PlayAudio("Taunt", TauntSound.Value);
+			PlayAudio("Jump", JumpSound.Value, "^g");
 		}
 	}
 
@@ -314,17 +320,6 @@ public class Voicelines : BaseUnityPlugin
 		}
 	}
 
-	[HarmonyPatch(typeof(HeroPerformanceRegion), nameof(HeroPerformanceRegion.SetIsPerforming))]
-	private static class HeroPerformanceRegion_SetIsPerforming_Patch
-	{
-		[HarmonyPostfix]
-		private static void Postfix(HeroPerformanceRegion __instance, ref bool value)
-		{
-			if (value)
-				PlayAudio("Needolin", NeedolinSound.Value);
-		}
-	}
-
 	[HarmonyPatch(typeof(PlayMakerFSM), nameof(PlayMakerFSM.SendEvent))]
 	private static class PlayMakerFSM_SendEvent_Patch
 	{
@@ -336,92 +331,134 @@ public class Voicelines : BaseUnityPlugin
 			switch (__instance.FsmName)
 			{
 				case "Control":
-					switch (eventName)
-					{
-						case "HIT":
-							PlayAudio("Warding Bell Hit", WardingBellHitSound.Value);
-							break;
-					}
+					if (eventName == "HIT")
+						PlayAudio("Warding Bell Hit", WardingBellHitSound.Value, "hornet_warding_bell_bind_break");
 					break;
 				case "Harpoon Dash":
-					switch (eventName)
-					{
-						case "DO MOVE":
-							PlayAudio("Clawline", ClawlineSound.Value);
-							break;
-					}
+					if (eventName == "DO MOVE")
+						PlayAudio("Clawline", ClawlineSound.Value, "^a|^g");
 					break;
 				case "Silk Specials":
 					switch (eventName)
 					{
 						case "NEEDLE THROW":
-							PlayAudio("Silkspear", SilkspearSound.Value);
+							PlayAudio("Silkspear", SilkspearSound.Value, "^Hornet_attack_large");
 							break;
 						case "PARRY":
-							PlayAudio("Cross Stitch", CrossStitchSound.Value);
+							PlayAudio("Cross Stitch", CrossStitchSound.Value, "^a");
 							break;
 						case "SILK CHARGE":
-							PlayAudio("Sharpdart", SharpdartSound.Value);
+							PlayAudio("Sharpdart", SharpdartSound.Value, "^Hornet_attack_large");
 							break;
 						case "SILK BOMB":
-							PlayAudio("Rune Rage", RuneRageSound.Value);
+							PlayAudio("Rune Rage", RuneRageSound.Value, "^Hornet_attack_large");
 							break;
 						case "BOSS NEEDLE":
 							PlayAudio("Pale Nails", PaleNailsSound.Value);
 							break;
 						case "THREAD SPHERE":
-							PlayAudio("Thread Storm", ThreadStormSound.Value);
+							PlayAudio("Thread Storm", ThreadStormSound.Value, "^Hornet_attack_large");
 							break;
 					}
 					break;
+				case "Superjump":
+					if (eventName == "DO MOVE")
+						PlayAudio("Silk Soar", SilkSoarSound.Value, "hornet_superjump_pt_1_into_position");
+					break;
 				case "Umbrella Float":
-					switch (eventName)
-					{
-						case "FLOAT":
-							if (__instance.ActiveStateName != "Cooldown")
-								PlayAudio("Drifer's Cloak", DrifersCloakSound.Value);
-							break;
-					}
+					if (eventName == "FLOAT" && __instance.ActiveStateName != "Cooldown")
+						PlayAudio("Drifter's Cloak", DrifersCloakSound.Value, "hornet_umbrella_open");
 					break;
 			}
 		}
 	}
 
-	// Prevents overlapping voice lines by preventing originals from playing & plays audio for events I couldn't find hooks for.
-	// Environmental damage currently not handled, this approach does not allow distinguishing between different damage sources.
-	// Alternatively patch SelectRandomClip and set __instance.volumeMin = 0f; __instance.volumeMax = 0f;
+	[HarmonyPatch(typeof(PlayMakerFSM), nameof(PlayMakerFSM.Start))]
+	private static class PlayMakerFSM_Start_Patch
+	{
+		[HarmonyPostfix]
+		public static void Postfix(PlayMakerFSM __instance)
+		{
+			if (__instance is { name: "Hero_Hornet(Clone)", FsmName: "Silk Specials" })
+			{
+				Fsm silkSpecials = __instance.Fsm;
+				Fsm? needolinFsm = silkSpecials.GetAction<RunFSM>("Needolin Sub", 2)?.fsmTemplateControl.RunFsm;
+
+				// hooking into Check Benched / Start Needolin Benched / Play Needolin Benched doesn't work
+				needolinFsm.GetState("Start Needolin").AddLambdaMethod(_ =>
+					PlayAudio("Needolin", NeedolinSound.Value, "^g")
+				);
+			}
+		}
+	}
+
 	[HarmonyPatch(typeof(RandomAudioClipTable), nameof(RandomAudioClipTable.CanPlay))]
 	private static class RandomAudioClipTable_CanPlay_Patch
 	{
 		[HarmonyPrefix]
-		private static bool Prefix(RandomAudioClipTable __instance)
+		private static void Prefix(RandomAudioClipTable __instance)
 		{
 			// Attack Heavy Hornet Voice, Attack Needle Art Hornet Voice, Attack Normal Hornet Voice, Bind Hornet Voice, Death Hornet Voice, Frost Damage Hornet Voice, Grunt Hornet Voice, Hazard Damage Hornet Voice, Hornet_attack_large, hornet_footstep_bell, hornet_footstep_bone, hornet_footstep_grass, hornet_footstep_hard, hornet_footstep_metal, hornet_footstep_metal_thin, hornet_footstep_moss, hornet_footstep_sand, hornet_footstep_snow, hornet_footstep_wet_metal, hornet_footstep_wet_wood, hornet_footstep_wood, hornet_needolin_small_move, Hornet_poshanka, hornet_projectile_twang Quick Sling, Hornet_roar_lock_grunt, hornet_run_start, hornet_run_start Cloakless, hornet_silk_sprint_overlay, Hornet_small_wake_sharp, hornet_taunt_beast, hornet_tool_piton, hornet_weak_exert_short, hornet_weak_exert_standard, hornet_wound_heavy, Power Up Hornet Voice, Quick Wound Hornet Voice, Skill A Hornet Voice, Skill H Hornet Voice, Small Wake Hornet Voice, Talk Hornet Voice, Taunt Hornet Voice, WakeFromDream Hornet Voice, Wallrun Grunt Hornet Voice, Wound Hornet Voice
 			// Instance.Logger.LogInfo($"RandomAudioClipTable Name: {__instance.name}");
 
-			if (!PluginEnabled.Value || !ReplaceGameSounds.Value)
-				return true;
-
 			switch (__instance.name)
 			{
-				case "Attack Heavy Hornet Voice" when DashAttackSound.Value != "None":
-					PlayAudio("Dash Attack", DashAttackSound.Value);
-					return false;
-				case "Attack Needle Art Hornet Voice" when NailArtSound.Value != "None":
-					PlayAudio("Nail Art", NailArtSound.Value);
-					return false;
-				case "Bind Hornet Voice" when BindSound.Value != "None":
-					PlayAudio("Bind", BindSound.Value);
-					return false;
-				case "Attack Normal Hornet Voice" when AttackSound.Value != "None":
-				case "Grunt Hornet Voice" when JumpSound.Value != "None":
-				case "Hornet_poshanka" when RingTauntSound.Value != "None":
-				case "Taunt Hornet Voice" when TauntSound.Value != "None":
-				case "Wound Hornet Voice" when HurtSound.Value != "None":
-					return false;
+				case "Attack Heavy Hornet Voice":
+					PlayAudio("Dash Attack", DashAttackSound.Value, "^a");
+					break;
+				case "Attack Needle Art Hornet Voice":
+					PlayAudio("Nail Art", NailArtSound.Value, "^a");
+					break;
+				case "Bind Hornet Voice":
+					PlayAudio("Bind", BindSound.Value, "^bind|^hornet_bind");
+					break;
+				case "Hornet_poshanka":
+					PlayAudio("Ring Taunt", RingTauntSound.Value, "^Hornet_poshanka");
+					break;
+				case "Taunt Hornet Voice":
+					PlayAudio("Taunt", TauntSound.Value, "^t");
+					break;
 				default:
-					return true;
+					break;
 			}
+		}
+	}
+
+	[HarmonyPatch(typeof(AudioSource), nameof(AudioSource.PlayOneShot), typeof(AudioClip), typeof(float))]
+	private static class AudioSource_PlayOneShot_Patch
+	{
+		private static bool Prefix(AudioSource __instance, AudioClip clip)
+		{
+			string sourcename = __instance.GetName();
+
+			if (!(sourcename == "Audio Player Actor(Clone)"
+				|| sourcename == "Audio Player Actor 2D(Clone)"
+				|| sourcename.EndsWith("Voice")))
+				return true;
+
+			if (!PluginEnabled.Value || !ReplaceGameSounds.Value || ClipsToBlock.Count == 0)
+				return true;
+
+			ClipsToBlock.RemoveAll(entry => Time.time > entry.ExpiryTime);
+
+			var matchingEntries = ClipsToBlock.Where(entry =>
+				System.Text.RegularExpressions.Regex.IsMatch(clip.name, entry.Pattern)
+			).ToList();
+
+			if (matchingEntries.Any())
+			{
+				Instance.Logger.LogInfo($"Suppressing clip: {clip.name} (matched patterns: {string.Join(", ", matchingEntries.Select(e => e.Pattern))})");
+
+				// Remove the matched entries from the block list
+				foreach (var entry in matchingEntries)
+				{
+					ClipsToBlock.Remove(entry);
+				}
+
+				return false;
+			}
+
+			return true;
 		}
 	}
 }
