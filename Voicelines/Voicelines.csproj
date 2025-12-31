@@ -23,7 +23,7 @@
 		<PackageReference Include="BepInEx.PluginInfoProps" Version="1.1.0" />
 		<PackageReference Include="UnityEngine.Modules" Version="6000.0.50" IncludeAssets="compile" />
 		<PackageReference Include="Silksong.GameLibs" Version="1.1.0-silksong1.0.29315"/>
-		<PackageReference Include="Silksong.FsmUtil" Version="0.3.3" />
+		<PackageReference Include="Silksong.FsmUtil" Version="0.3.4" />
 		<Compile Include="..\ConfigurationManagerAttributes.cs" Link="ConfigurationManagerAttributes.cs" />
 	</ItemGroup>
 
