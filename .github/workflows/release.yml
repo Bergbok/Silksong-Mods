@@ -32,7 +32,7 @@ jobs:
         uses: actions/checkout@v6.0.1
 
       - name: Install dotnet
-        uses: actions/setup-dotnet@v5.0.1
+        uses: actions/setup-dotnet@v5.1.0
 
       - name: Build
         run: dotnet build ./${{ needs.get-release-info.outputs.mod-name }} -c Release
@@ -162,7 +162,7 @@ jobs:
 
       - name: Install dotnet
         if: steps.skip-release.outputs.result == 'false'
-        uses: actions/setup-dotnet@v5.0.1
+        uses: actions/setup-dotnet@v5.1.0
 
       - name: Install Thunderstore CLI
         if: steps.skip-release.outputs.result == 'false'
