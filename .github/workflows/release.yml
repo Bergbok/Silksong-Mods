@@ -29,7 +29,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v6.0.1
+        uses: actions/checkout@v6.0.2
 
       - name: Install dotnet
         uses: actions/setup-dotnet@v5.1.0
@@ -47,7 +47,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v6.0.1
+        uses: actions/checkout@v6.0.2
         with:
           fetch-depth: 0
 
@@ -102,7 +102,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Thunderstore CLI config
-        uses: actions/checkout@v6.0.1
+        uses: actions/checkout@v6.0.2
         with:
           sparse-checkout: ${{ needs.get-release-info.outputs.mod-name }}
           sparse-checkout-cone-mode: false
