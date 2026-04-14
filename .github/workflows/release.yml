@@ -38,7 +38,7 @@ jobs:
         run: dotnet build ./${{ needs.get-release-info.outputs.mod-name }} -c Release
 
       - name: Upload build archive
-        uses: actions/upload-artifact@v7.0.0
+        uses: actions/upload-artifact@v7.0.1
         with:
           name: build
           path: ${{ needs.get-release-info.outputs.mod-name  }}/bin/Release/${{ needs.get-release-info.outputs.mod-name }}.zip
